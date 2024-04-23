@@ -1,0 +1,11 @@
+name: Build and deploy code
+on:
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy_prod:
+    if: github.ref == 'refs/heads/main'
+    uses: shmarlya/bicep-playground/.github/workflows/build.yml@main
+  build_and_deploy_dev:
+    if: github.ref == 'refs/heads/main'
+    uses: shmarlya/bicep-playground/.github/workflows/build.yml@dev

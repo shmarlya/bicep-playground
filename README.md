@@ -1,3 +1,10 @@
+// TODO:
+
+-
+- setup tenant application such as ProxyIdentityExperienceFramework and IdentityExperienceFramework, Web api and SPA client, upload Identity Experience Framework Custom Policies, Setup Policies Encryption and Singing Containers
+- create db
+- create computer vision resource
+
 1. Install Azure CLI
 
 ```
@@ -29,6 +36,7 @@ or
 az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az ad signed-in-user show --query id --output tsv) --assignee-principal-type User
 
 or
+
 Open Microsoft Entra ID ->  Under Manage, select Properties. -> Under Access management for Azure resources, set the toggle to Yes.
 
 
@@ -43,46 +51,69 @@ az login
 or
 az login --use-device-code
 
+// verify you logged for correct user
+az ad signed-in-user show
+
 az logout
 
 ```
 
-4. Initial Deploy - creating Managment Group + Subscription under that managment group
+4. Set required parameters
 
-- save billing info for creating subscription in managment-group
+- enviroment variables
+- main.bicepparam
 
-```
-billingAccountName=$(az billing account list --query "[0].name" -o tsv)
-echo $billingProfileName
-billingProfileName=$(az billing account list-invoice-section --billing-account-name "$billingAccountName" --query "[0].billingProfileSystemId" -o tsv)
-echo $billingProfileName
-invoiceSectionName=$(az billing account list-invoice-section --billing-account-name "$billingAccountName" --query "[0].invoiceSectionSystemId" -o tsv)
-echo $invoiceSectionName
-```
-
-- initialize deploy by runing command <B>correct parameters to real one</B> except from prev step
+5. Create Managment group and subscription
 
 ```
-az deployment tenant create --name 'demodeploy' --location 'eastus2' --template-file './azure/main.bicep' --parameters projectName='demodeploy' environment='test' location='eastus2' billingAccountName="$billingAccountName" billingProfileName="$billingProfileName" invoiceSectionName="$invoiceSectionName"
-```
+az deployment tenant what-if --name mainDeployment --location polandcentral --template-file "./.deploy/main.bicep" --parameters "./.deploy/main.bicepparam"
 
-// TODO:
+az deployment tenant validate --name mainDeployment --location polandcentral --template-file "./.deploy/main.bicep" --parameters "./.deploy/main.bicepparam"
 
-- create subscription spending limit resource
-- create resource group
-- create tenant under rg
-- create web app service plan (linux node)
-- create web app service under plan
-- create blob storage account
-- create key-value resource
-- create computer vision resource
-
-- create db
-
-4. Helpfull commands
+az deployment tenant create --name mainDeployment --location polandcentral --template-file "./.deploy/main.bicep" --parameters "./.deploy/main.bicepparam"
 
 ```
 
+7. Create Service principal and update github secrets with output
+
+```
+spn_displayname='GitHubActions'
+az ad sp create-for-rbac --name $spn_displayname
+
+in the following format:
+{
+    "clientSecret":  "******",
+    "subscriptionId":  "******",
+    "tenantId":  "******",
+    "clientId":  "******"
+}
+
+az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az ad sp list --display-name "$spn_displayname" --query '[].id' -o tsv) --assignee-principal-type ServicePrincipal
+
+DONT FORGET to add in portal for created SP ->
+Certificates & secrets -> Add credential -> setup github actions and repository
+
+```
+
+```
+#sign into AZ CLI, this will redirect you to a webbrowser for authentication, if required
+az login
+
+#tenant level principal
+az ad sp create-for-rbac --name GithubActions --role contributor --scopes /providers/Microsoft.AzureActiveDirectoryB2C/b2cDirectories/{tenant_name}
+
+#assign Owner role at Tenant root scope ("/") as a User Access Administrator to current user (gets object Id of the current user (az login))
+az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az ad signed-in-user show --query id --output tsv) --assignee-principal-type User
+
+#(optional) assign Owner role at Tenant root scope ("/") as a User Access Administrator to service principal (set spn_displayname to your service principal displayname)
+
+spn_displayname='GitHubSP'
+az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az ad sp list --display-name "$spn_displayname" --query '[].id' -o tsv) --assignee-principal-type ServicePrincipal
+```
+
+8. Helpfull commands
+
+```
 // signed in user id
 az ad signed-in-user show --query id --output tsv
 
@@ -92,17 +123,37 @@ az account management-group list
 // list subscriptions
 az account subscription list
 
+// query list subscriptions
+subscriptionId=$(az account subscription list --query "[?contains(displayName, '$projectName')].subscriptionId" --output tsv)
+echo $subscriptionId
+
+// set subscription context
+az account set --subscription "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
 // list tenants
 az account tenant list
 
 // current subscription context
 az account show --query name
 
-// set subscription context
-az account set --subscription "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 // list locations
 az account list-locations
 
+// payment account info
+billingAccountName=$(az billing account list --query "[0].name" -o tsv)
+echo $billingAccountName
+
+billingProfileName=$(az billing account list-invoice-section --billing-account-name "$billingAccountName" --query "[0].billingProfileSystemId" -o tsv)
+echo $billingProfileName
+
+invoiceSectionName=$(az billing account list-invoice-section --billing-account-name "$billingAccountName" --query "[0].invoiceSectionSystemId" -o tsv)
+echo $invoiceSectionName
+
+
+// remove ALL tenant level deployments
+for deployment in $(az deployment tenant list --query "[].{name:name}" -o tsv); do
+  az deployment tenant delete --name $deployment
+done
 
 ```

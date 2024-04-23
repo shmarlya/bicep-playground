@@ -1,0 +1,15 @@
+name: Upload build
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ vars.APP_SERVICE_NAME }}
+          path: .
+          overwrite: true
