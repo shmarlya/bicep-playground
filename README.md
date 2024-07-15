@@ -30,6 +30,8 @@ https://learn.microsoft.com/en-us/azure/role-based-access-control/elevate-access
 // add required permissions read:
 https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-azure
 
+// add congitive contributor role to user
+
 or
 
 // assign Owner role at Tenant root scope ("/") as a User Access Administrator to current user (gets object Id of the current user (az login))
@@ -60,7 +62,7 @@ az logout
 
 4. Set required parameters
 
-- enviroment variables
+- enviroment variables (config.json)
 - main.bicepparam
 
 5. Create Managment group and subscription

@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    uses: shmarlya/bicep-playground/.github/workflows/build.yml@dev
+    uses: ./.github/workflows/build.yml
   download_build:
     needs: [build]
     uses: ./.github/workflows/download_build.yml

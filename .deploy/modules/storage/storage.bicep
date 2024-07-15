@@ -27,4 +27,5 @@ resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
 var connectStr = createStorageConnectionString(storageName, storage.listKeys().keys[0].value)
 
 output AZURE_STORAGE_CONNECTION_STRING string = connectStr
+output AZURE_STORAGE_BLOB_DOMAIN string = storage.properties.primaryEndpoints.blob
 

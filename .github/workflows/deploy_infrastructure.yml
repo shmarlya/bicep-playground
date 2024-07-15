@@ -30,5 +30,5 @@ jobs:
           scope: 'tenant'
           region: ${{vars.LOCATION}}
           template: .deploy/main.bicep
-          parameters: .deploy/main.bicepparam orgName=${{vars.ORG_NAME}} projectName=${{vars.WEBAPP_NAME}} location=${{vars.LOCATION}} billingAccountName=${{vars.BILLING_ACCOUNT_NAME}} billingProfileName=${{vars.BILLING_PROFILE_NAME}} invoiceSectionName=${{vars.INVOICE_SECTION_NAME}}
+          parameters: .deploy/main.bicepparam orgName=${{vars.ORG_NAME}} projectName=${{vars.WEBAPP_NAME}} location=${{vars.LOCATION}} billingAccountName=${{vars.BILLING_ACCOUNT_NAME}} billingProfileName=${{vars.BILLING_PROFILE_NAME}} invoiceSectionName=${{vars.INVOICE_SECTION_NAME}} STRIPE_SECRET=${{vars.STRIPE_SECRET}} STRIPE_WEBHOOK_SECRET=${{vars.STRIPE_WEBHOOK_SECRET}}
           failOnStdErr: true

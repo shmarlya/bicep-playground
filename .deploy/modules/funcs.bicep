@@ -7,7 +7,7 @@ func removeDashesFromString(arg string)string => '${replace(replace(trimStringPa
 func createTenantName(tenantName string, env string)string => '${removeDashesFromString(tenantName)}${env}.onmicrosoft.com'
 
 @export()
-func createStorageName(projectName string)string => '${removeDashesFromString('strg${projectName}')}'
+func createStorageName(projectName string, env string)string => '${removeDashesFromString('strg${projectName}${env}')}'
 
 @export()
 func createManagmentGroupName(orgName string)string => 'mg-${removeDashesFromString(orgName)}'
@@ -28,4 +28,14 @@ func createAppServiceName(projectName string, location string, env string)string
 func createWebAppName(projectName string, env string)string => 'web-${removeDashesFromString(projectName)}-${removeDashesFromString(env)}'
 
 @export()
+func createDefaultWebAppDomain(webAppName string) string => 'https://${webAppName}.azurewebsites.net'
+
+@export()
 func createStorageConnectionString(storageName string, storageKey string)string => 'DefaultEndpointsProtocol=https;AccountName=${storageName};AccountKey=${storageKey};EndpointSuffix=${environment().suffixes.storage}'
+
+@export()
+func createB2CapplicationRedirectUri(tenantName string) string => 'https://${tenantName}.b2clogin.com/${tenantName}.onmicrosoft.com'
+
+@export()
+func createCongitiveServiceName(projectName string, env string) string => 'copmuter-vision-${removeDashesFromString(projectName)}-${removeDashesFromString(env)}'
+
