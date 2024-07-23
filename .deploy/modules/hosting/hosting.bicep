@@ -22,20 +22,17 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
 ])
 param linuxFxVersion string = 'Node|20'
 param webAppName string
-@allowed([
-  'dev'
-  'prod'
-])
 param ENV string
 param AZURE_COMPUTER_VISION_KEY string
 param AZURE_COMPUTER_VISION_ENDPOINT string
 param AZURE_STORAGE_CONNECTION_STRING string
 param AZURE_STORAGE_BLOB_DOMAIN string
-param DOMAIN_NAME string
+param WEB_APP_DOMAIN string
 param PORT string
 param SOCKET_PORT string
 param STRIPE_SECRET string
 param STRIPE_WEBHOOK_SECRET string
+param B2C_REDIRECT_URL string
 
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: webAppName
@@ -50,8 +47,8 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
           value:  ENV
         }
         {
-          name: 'DOMAIN_NAME'
-          value: DOMAIN_NAME
+          name: 'WEB_APP_DOMAIN'
+          value: WEB_APP_DOMAIN
         }
         {
           name: 'PORT'
@@ -84,6 +81,10 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'AZURE_COMPUTER_VISION_ENDPOINT'
           value: AZURE_COMPUTER_VISION_ENDPOINT
+        }
+        {
+          name:'B2C_REDIRECT_URL'
+          value: B2C_REDIRECT_URL
         }
       ]
     }

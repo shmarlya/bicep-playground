@@ -2,7 +2,7 @@
 
 targetScope = 'tenant'
 
-param managementGroupId string
+param subscriptionTenantId string
 param subscriptionName string
 
 @description('Payment account necessary info - az billing account list')
@@ -17,7 +17,7 @@ resource subscriptionAlias 'Microsoft.Subscription/aliases@2021-10-01' = {
   scope: tenant()
   properties: {
     additionalProperties: {
-      managementGroupId: managementGroupId
+      subscriptionTenantId: subscriptionTenantId
       tags: {}
     }
     billingScope: '/billingAccounts/${billingAccountName}/billingProfiles/${billingProfileName}/invoiceSections/${invoiceSectionName}'

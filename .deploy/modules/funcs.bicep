@@ -4,7 +4,10 @@ func trimStringParam(arg string)string => toLower(replace(arg, ' ', ''))
 func removeDashesFromString(arg string)string => '${replace(replace(trimStringParam(arg), '-', ''), '_', '')}'
 
 @export()
-func createTenantName(tenantName string, env string)string => '${removeDashesFromString(tenantName)}${env}.onmicrosoft.com'
+func createShortTenantName(projectName string, env string)string => '${removeDashesFromString(projectName)}${env}'
+
+@export()
+func createFullTenantName(shortTenantName string)string => '${shortTenantName}.onmicrosoft.com'
 
 @export()
 func createStorageName(projectName string, env string)string => '${removeDashesFromString('strg${projectName}${env}')}'
@@ -38,4 +41,11 @@ func createB2CapplicationRedirectUri(tenantName string) string => 'https://${ten
 
 @export()
 func createCongitiveServiceName(projectName string, env string) string => 'copmuter-vision-${removeDashesFromString(projectName)}-${removeDashesFromString(env)}'
+
+
+// @export()
+// func createRootMG(orgName string) string => createManagmentGroupName('root${orgName}')
+
+// @export()
+// func createRootSub(orgName string, location string) string => createSubscriptionName('rootplaceholder${orgName}', location)
 

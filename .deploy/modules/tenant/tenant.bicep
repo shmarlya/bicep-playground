@@ -1,10 +1,6 @@
-import {createB2CapplicationRedirectUri} from '../funcs.bicep'
-
 targetScope = 'resourceGroup'
-provider microsoftGraph
 
-param projectName string
-param tenantName string
+param fullTenantName string
 
 @allowed(
   [
@@ -14,15 +10,11 @@ param tenantName string
 )
 param countryCode string
 
-@allowed([
-  'global'
-  'unitedstates'
-  'europe'
-])
+
 param tenantRegion string
 
 resource tenant 'Microsoft.AzureActiveDirectory/b2cDirectories@2021-04-01' = {
-  name: tenantName
+  name: fullTenantName
   location: tenantRegion
   sku: {
     name: 'Standard'
@@ -31,20 +23,9 @@ resource tenant 'Microsoft.AzureActiveDirectory/b2cDirectories@2021-04-01' = {
   properties: {
     createTenantProperties: {
       countryCode: countryCode
-      displayName: tenantName
+      displayName: fullTenantName
     }
   }
 }
 
-var IdentityExperienceFramework_NAME = 'IdentityExperienceFramework'
-var IdentityExperienceFramework_REDIRECT_URI = createB2CapplicationRedirectUri(projectName)
-
-resource IdentityExperienceFramework_APP 'Microsoft.Graph/applications@v1.0' = {
-  dependsOn: [tenant]
-  uniqueName: IdentityExperienceFramework_NAME
-  displayName: IdentityExperienceFramework_NAME
-  signInAudience: 'AzureADMyOrg'
-  web: {
-    redirectUris: [IdentityExperienceFramework_REDIRECT_URI]
-  }
-}
+output tenantId string = tenant.properties.tenantId

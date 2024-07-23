@@ -153,9 +153,15 @@ invoiceSectionName=$(az billing account list-invoice-section --billing-account-n
 echo $invoiceSectionName
 
 
+
 // remove ALL tenant level deployments
 for deployment in $(az deployment tenant list --query "[].{name:name}" -o tsv); do
   az deployment tenant delete --name $deployment
+done
+
+// remove ALL sub level deployments
+for deployment in $(az deployment sub list --query "[].{name:name}" -o tsv); do
+  az deployment sub delete --name $deployment
 done
 
 ```

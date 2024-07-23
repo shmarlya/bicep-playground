@@ -1,11 +1,7 @@
-import {createManagmentGroupName} from '../funcs.bicep'
 
 targetScope = 'tenant'
 
-@description('Organization name')
-param orgName string
-
-var managmentGroupName = createManagmentGroupName(orgName)
+param managmentGroupName string
 
 resource managmentGroup 'Microsoft.Management/managementGroups@2021-04-01' = {
   name: managmentGroupName

@@ -1,16 +1,17 @@
 
 targetScope = 'resourceGroup'
 
-@allowed([
-  'prod'
-  'dev'
-])
 param env string
-param DOMAIN_NAME string
+param WEB_APP_DOMAIN string
 param PORT string
 param SOCKET_PORT string
 param STRIPE_SECRET string
 param STRIPE_WEBHOOK_SECRET string
+param B2C_REDIRECT_URL string
+param storageName string
+param appServicePlanName string
+param webAppName string
+param congitiveServiceName string
 
 var resourcesMap = {
   prod: {
@@ -25,9 +26,6 @@ var resourcesMap = {
     computeVisionSKU: 'S1'
   }
 }
-
-@minLength(3)
-param storageName string
 module storageModule './storage/storage.bicep'= {
   name: 'storageModule' 
   params: {
@@ -35,8 +33,6 @@ module storageModule './storage/storage.bicep'= {
     storageSku: resourcesMap[env].storageSKU 
   }
 }
-
-param congitiveServiceName string
 module congitiveModule './cognitive/computer-vision.bicep' = {
   name: 'congitiveModule'
   params: {
@@ -44,10 +40,6 @@ module congitiveModule './cognitive/computer-vision.bicep' = {
     congitiveServiceName: congitiveServiceName
   }
 }
-
-
-param appServicePlanName string
-param webAppName string
 module hostingModule './hosting/hosting.bicep'= {
   name: 'hostingModule'
   params: {
@@ -55,7 +47,7 @@ module hostingModule './hosting/hosting.bicep'= {
     appServicePlanName: appServicePlanName
     webAppName: webAppName
     ENV: env
-    DOMAIN_NAME: DOMAIN_NAME
+    WEB_APP_DOMAIN: WEB_APP_DOMAIN
     PORT: PORT
     SOCKET_PORT: SOCKET_PORT
     STRIPE_SECRET: STRIPE_SECRET
@@ -64,6 +56,7 @@ module hostingModule './hosting/hosting.bicep'= {
     AZURE_STORAGE_BLOB_DOMAIN: storageModule.outputs.AZURE_STORAGE_BLOB_DOMAIN
     AZURE_COMPUTER_VISION_KEY : congitiveModule.outputs.AZURE_COMPUTER_VISION_KEY
     AZURE_COMPUTER_VISION_ENDPOINT: congitiveModule.outputs.AZURE_COMPUTER_VISION_ENDPOINT
+    B2C_REDIRECT_URL: B2C_REDIRECT_URL
   }
 }
 

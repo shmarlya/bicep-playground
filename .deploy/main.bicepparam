@@ -1,30 +1,21 @@
 using 'main.bicep'
 
 // for pipe line it should be set to false
-// because sp cant create subscriptions with default permissions
-// so you have to run deploy locally once - under your user 
-// (and dont forget to set it to true in that case)
-param firstTimeDeploy = false
+param firstTimeDeploy = true
+param orgSubscriptionId = ''
+param projectName = 'bibas'
 
-// managment group module
-param orgName = ''
+//tenant module
+param tenantRegion = 'United States'
+param countryCode = 'US'
 
-
-// subscription module
-param projectName = ''
-param location = ''
+// web api params
+param PORT = '3000'
+param SOCKET_PORT = '3333'
+param STRIPE_SECRET = 'STRIPE_SECRET'
+param STRIPE_WEBHOOK_SECRET = 'STRIPE_WEBHOOK_SECRET'
 
 param billingAccountName = ''
 param billingProfileName = ''
 param invoiceSectionName = ''
-
-
-// budget module
-param contactEmails = ['yarmovan@gmail.com']
-param budgetStartDate = '2024-06-01'
-param budgetEndDate = '2025-06-30'
-
-
-//tenant module
-param tenantRegion = 'europe'
-param countryCode = 'PL'
+param subscriptionTenantId = ''

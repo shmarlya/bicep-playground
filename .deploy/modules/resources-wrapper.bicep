@@ -1,25 +1,24 @@
-import {createStorageName, createResourceGroupName, createAppServiceName, createWebAppName, createTenantName, createDefaultWebAppDomain, createCongitiveServiceName} from './funcs.bicep'
-
-targetScope = 'tenant'
+targetScope = 'subscription'
 
 param firstTimeDeploy bool
 param subscriptionId string
-param projectName string
 param location string
 param PORT string
 param SOCKET_PORT string
 param STRIPE_SECRET string
 param STRIPE_WEBHOOK_SECRET string
-
-@allowed(
-  [
-    'dev'
-    'prod'
-  ]
-)
 param env string
-
-var resourceGroupName = createResourceGroupName(projectName, location, env)
+param projectName string
+param resourceGroupName string
+param countryCode string
+param tenantRegion string
+param fullTenantName string
+param appServicePlanName string
+param webAppName string
+param storageName string
+param congitiveServiceName string
+param WEB_APP_DOMAIN string
+param B2C_REDIRECT_URL string
 module rgModule './rg/rsrc-group.bicep' =  {
   name: 'rgModule-${env}'
   scope: subscription(subscriptionId)
@@ -29,55 +28,43 @@ module rgModule './rg/rsrc-group.bicep' =  {
   }
 }
 
-
-param countryCode string
-param tenantRegion string
-var tenantName = createTenantName(projectName, env)
 module tenantModule './tenant/tenant.bicep' = if(firstTimeDeploy){
   name: 'tenantModule-${env}'
   dependsOn: [rgModule]
   scope: resourceGroup(subscriptionId, resourceGroupName)
   params: {
-    projectName: projectName
-    tenantName:tenantName
+    fullTenantName:fullTenantName
     countryCode: countryCode
     tenantRegion: tenantRegion
   }
 }
 
+module appsModule './apps/apps.bicep' = {
+  name: 'appsModule'
+  dependsOn: [rgModule, tenantModule]
+  scope: resourceGroup(subscriptionId, resourceGroupName)
+  params: {
+    projectName: projectName
+    B2C_REDIRECT_URL:B2C_REDIRECT_URL
+  }
+}
 
-
-// module appsModule './apps/apps.bicep' = {
-//   name: 'appsModule'
-//   dependsOn: [rgModule, tenantModule]
-//   scope: resourceGroup(subscriptionId, resourceGroupName)
-//   params: {
-//     projectName: projectName
-//     DOMAIN_NAME: DOMAIN_NAME
-//   }
-// }
-
-
-var appServicePlanName = createAppServiceName(projectName, location, env)
-var webAppName = createWebAppName(projectName, env)
-var storageName = createStorageName(projectName, env)
-var congitiveServiceName = createCongitiveServiceName(projectName, env)
-var DOMAIN_NAME = createDefaultWebAppDomain(webAppName)
 module resourcesModule './resources.bicep' = {
   name: 'resourcesModule-${env}'
-  dependsOn: [rgModule]
+  dependsOn: [rgModule, tenantModule]
   scope: resourceGroup(subscriptionId, resourceGroupName)
   params: {
     env: env
     appServicePlanName: appServicePlanName
     webAppName: webAppName
     storageName: storageName
-    DOMAIN_NAME: DOMAIN_NAME
+    WEB_APP_DOMAIN: WEB_APP_DOMAIN
     PORT: PORT
     SOCKET_PORT: SOCKET_PORT
     STRIPE_SECRET: STRIPE_SECRET
     STRIPE_WEBHOOK_SECRET: STRIPE_WEBHOOK_SECRET
     congitiveServiceName: congitiveServiceName
+    B2C_REDIRECT_URL: B2C_REDIRECT_URL
   }
 }
 
