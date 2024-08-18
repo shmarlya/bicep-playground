@@ -1,3 +1,34 @@
 {
-  "ENVIRONMENTS": ["dev", "prod"]
+  "USER_INITIAL_SUBSCRIPTION_ID": "",
+  "USER_BILINGINFO": {
+    "billingAccountName": "",
+    "billingProfileName": "",
+    "invoiceSectionName": ""
+  },
+
+  "ORG_NAME": "ivyar",
+  "ORG_SUBSCRIPTION_ID": "",
+  "ORG_POSTFIX": "root",
+  "ORG_TENANT_REGION": "United States",
+  "ORG_COUNTRY_CODE": "US",
+  "ORG_DATA": {
+    "contactEmails": ["yarmovan@gmail.com"],
+    "budgetStartDate": "2024-06-01",
+    "budgetEndDate": "2025-06-30"
+  },
+
+  "ENVIRONMENTS": ["dev"],
+  "PROJECT_NAME": "bibasplgrnd",
+  "PROJECT": {
+    "dev": {
+      "tenantId": "",
+      "subsciprtionId": "",
+      "params": {
+        "PORT": "3000",
+        "SOCKET_PORT": "3333",
+        "STRIPE_SECRET": "STRIPE_SECRET",
+        "STRIPE_WEBHOOK_SECRET": "STRIPE_WEBHOOK_SECRET"
+      }
+    }
+  }
 }

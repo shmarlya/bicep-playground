@@ -1,9 +1,16 @@
+sample setup:
+![sample infrastructure](sample.png)
+
 // TODO:
 
 -
 - setup tenant application such as ProxyIdentityExperienceFramework and IdentityExperienceFramework, Web api and SPA client, upload Identity Experience Framework Custom Policies, Setup Policies Encryption and Singing Containers
+- create programatically Github service principal - on org level for start
+- setup CI/CD working github actions pipeline with provided input params (env)
 - create db
-- create computer vision resource
+- create computer vision resource - find the way accept EULA programatically
+- mark @secure parameters
+- move resource map to config.json
 
 1. Install Azure CLI
 
@@ -57,22 +64,6 @@ az login --use-device-code
 az ad signed-in-user show
 
 az logout
-
-```
-
-4. Set required parameters
-
-- enviroment variables (config.json)
-- main.bicepparam
-
-5. Create Managment group and subscription
-
-```
-az deployment tenant what-if --name mainDeployment --location polandcentral --template-file "./.deploy/main.bicep" --parameters "./.deploy/main.bicepparam"
-
-az deployment tenant validate --name mainDeployment --location polandcentral --template-file "./.deploy/main.bicep" --parameters "./.deploy/main.bicepparam"
-
-az deployment tenant create --name mainDeployment --location polandcentral --template-file "./.deploy/main.bicep" --parameters "./.deploy/main.bicepparam"
 
 ```
 

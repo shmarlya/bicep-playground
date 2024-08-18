@@ -5,7 +5,7 @@ param congitiveServiceName string
 @description('Location for all resources.')
 // AVAILABLE ONLY IN SOME REGIONS
 // https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/?products=cognitive-services&regions=all#products-by-region_tab0
-param location string = 'eastus'
+param location string = resourceGroup().location
 
 @allowed([
   'F0'

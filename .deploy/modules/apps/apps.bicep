@@ -1,10 +1,14 @@
-import {createB2CapplicationRedirectUri} from '../funcs.bicep'
+import {createB2CapplicationRedirectUri} from '../../functions/resource-names.bicep'
 
 provider microsoftGraph
 
-param projectName string
-param B2C_REDIRECT_URL string
 
+// ====================================== BRIEF DESCRIPTION ==================================== //
+// ====================================== GETTING STARTED ====================================== //
+// ====================================== PARAMETERS =========================================== //
+param B2C_REDIRECT_URL string
+param tenantName string
+// ====================================== VARIABLES ============================================ //
 var wellKnown = {
   MSGRAPH_APP_ID: '00000003-0000-0000-c000-000000000000'
   MSGRAPH_APP_WEBAPI_PERMISSIONS: {
@@ -17,13 +21,13 @@ var wellKnown = {
   }
 }
 
+var IdentityExperienceFramework_NAME = 'IdentityExperienceFramework'
+var IdentityExperienceFramework_SCOPE = 'user_impersonation'
+var IdentityExperienceFramework_REDIRECT_URI = createB2CapplicationRedirectUri(tenantName)
+// ====================================== RESOURCES ============================================ //
 resource MSGRAPH_SP 'Microsoft.Graph/servicePrincipals@v1.0' = {
   appId: wellKnown.MSGRAPH_APP_ID
 }
-
-var IdentityExperienceFramework_NAME = 'IdentityExperienceFramework'
-var IdentityExperienceFramework_SCOPE = 'user_impersonation'
-var IdentityExperienceFramework_REDIRECT_URI = createB2CapplicationRedirectUri(projectName)
 
 resource IdentityExperienceFramework_APP 'Microsoft.Graph/applications@v1.0' = {
   uniqueName: IdentityExperienceFramework_NAME

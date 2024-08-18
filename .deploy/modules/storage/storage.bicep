@@ -1,5 +1,5 @@
 
-import {createStorageConnectionString} from '../funcs.bicep'
+import {createStorageConnectionString} from '../../functions/resource-names.bicep'
 
 @minLength(3)
 @maxLength(24)
@@ -24,8 +24,6 @@ resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   }
 }
 
-var connectStr = createStorageConnectionString(storageName, storage.listKeys().keys[0].value)
-
-output AZURE_STORAGE_CONNECTION_STRING string = connectStr
+output AZURE_STORAGE_CONNECTION_STRING string = createStorageConnectionString(storageName, storage.listKeys().keys[0].value)
 output AZURE_STORAGE_BLOB_DOMAIN string = storage.properties.primaryEndpoints.blob
 

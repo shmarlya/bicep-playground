@@ -1,7 +1,8 @@
 targetScope = 'resourceGroup'
 
+// ====================================== PARAMETERS =========================================== //
+@description('should be xxxxxxxx.onmicrosoft.com')
 param fullTenantName string
-
 @allowed(
   [
     'PL'
@@ -9,10 +10,13 @@ param fullTenantName string
   ]
 )
 param countryCode string
-
-
+@allowed([
+  'United States'
+  'Europe'
+])
 param tenantRegion string
 
+// ====================================== RESOURCES ============================================ //
 resource tenant 'Microsoft.AzureActiveDirectory/b2cDirectories@2021-04-01' = {
   name: fullTenantName
   location: tenantRegion
@@ -28,4 +32,5 @@ resource tenant 'Microsoft.AzureActiveDirectory/b2cDirectories@2021-04-01' = {
   }
 }
 
+// ====================================== OUTPUT =============================================== //
 output tenantId string = tenant.properties.tenantId

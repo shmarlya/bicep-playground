@@ -28,9 +28,6 @@ func createBudgetName(subName string)string => 'budget-${subName}'
 func createAppServiceName(projectName string, location string, env string)string => 'hosting-${removeDashesFromString(projectName)}-${removeDashesFromString(location)}-${removeDashesFromString(env)}'
 
 @export()
-func createWebAppName(projectName string, env string)string => 'web-${removeDashesFromString(projectName)}-${removeDashesFromString(env)}'
-
-@export()
 func createDefaultWebAppDomain(webAppName string) string => 'https://${webAppName}.azurewebsites.net'
 
 @export()
@@ -41,11 +38,3 @@ func createB2CapplicationRedirectUri(tenantName string) string => 'https://${ten
 
 @export()
 func createCongitiveServiceName(projectName string, env string) string => 'copmuter-vision-${removeDashesFromString(projectName)}-${removeDashesFromString(env)}'
-
-
-// @export()
-// func createRootMG(orgName string) string => createManagmentGroupName('root${orgName}')
-
-// @export()
-// func createRootSub(orgName string, location string) string => createSubscriptionName('rootplaceholder${orgName}', location)
-
