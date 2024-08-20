@@ -24,6 +24,7 @@ param PORT string
 param SOCKET_PORT string
 param STRIPE_SECRET string
 param STRIPE_WEBHOOK_SECRET string
+param FULL_TENANT_NAME string
 param B2C_REDIRECT_URL string
 param storageName string
 param appServicePlanName string
@@ -48,7 +49,7 @@ module appsModule '../modules/apps/apps.bicep' = {
   name: 'appsModule'
   params: {
     B2C_REDIRECT_URL: B2C_REDIRECT_URL
-    tenantName: tenantName
+    FULL_TENANT_NAME: FULL_TENANT_NAME
   }
 }
 

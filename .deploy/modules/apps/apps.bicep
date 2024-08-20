@@ -2,28 +2,26 @@ import {createB2CapplicationRedirectUri} from '../../functions/resource-names.bi
 
 provider microsoftGraph
 
-
 // ====================================== BRIEF DESCRIPTION ==================================== //
 // ====================================== GETTING STARTED ====================================== //
 // ====================================== PARAMETERS =========================================== //
+param FULL_TENANT_NAME string
 param B2C_REDIRECT_URL string
-param tenantName string
 // ====================================== VARIABLES ============================================ //
 var wellKnown = {
   MSGRAPH_APP_ID: '00000003-0000-0000-c000-000000000000'
   MSGRAPH_APP_WEBAPI_PERMISSIONS: {
-    openid: '311a71cc-e848-46a1-bdf8-97ff7156d8e6'
-    offline_access: '7427af44-ae7c-4d5f-8a9a-a1bd3c0ebf4e'
-    'User.ReadWrite.All': '741f803b-c850-494e-b5df-cde7c675a1ca'
-    'User.ManageIdentities.All': 'c529cfca-c91b-489c-af2b-d92990b66ce6'
-    'Group.ReadWrite.All': '62a82d76-70ea-41e2-9197-370581804d09'
-    'Policy.ReadWrite.TrustFramework': '79a677f7-b79d-40d0-a36a-3e6f8688dd7a'
+    openid: '37f7f235-527c-4136-accd-4a02d197296e'
+    offline_access: '7427e0e9-2fba-42fe-b0c0-848c9e6a8182'
+    'User.ReadWrite.All': 'e0a7cdbb-08b0-4697-8264-0069786e9674'
+    'User.ManageIdentities.All': '637d7bec-b31e-4deb-acc9-24275642a2c9'
+    'Group.ReadWrite.All': '4e46008b-f24c-477d-8fff-7bb4ec7aafe0'
+    'Policy.ReadWrite.TrustFramework': 'cefba324-1a70-4a6e-9c1d-fd670b7ae392'
   }
 }
 
 var IdentityExperienceFramework_NAME = 'IdentityExperienceFramework'
 var IdentityExperienceFramework_SCOPE = 'user_impersonation'
-var IdentityExperienceFramework_REDIRECT_URI = createB2CapplicationRedirectUri(tenantName)
 // ====================================== RESOURCES ============================================ //
 resource MSGRAPH_SP 'Microsoft.Graph/servicePrincipals@v1.0' = {
   appId: wellKnown.MSGRAPH_APP_ID
@@ -36,16 +34,33 @@ resource IdentityExperienceFramework_APP 'Microsoft.Graph/applications@v1.0' = {
   web: {
     redirectUris: [B2C_REDIRECT_URL]
   }
+  identifierUris: [
+    'https://${FULL_TENANT_NAME}'
+  ]
+  api: {
+    oauth2PermissionScopes: [
+      {
+        adminConsentDescription: 'Allow the application to access IdentityExperienceFramework on behalf of the signed-in user.'
+        adminConsentDisplayName: 'Access IdentityExperienceFramework'
+        isEnabled: true
+        id: guid(FULL_TENANT_NAME)
+        type: 'Admin'
+        userConsentDescription: null
+        userConsentDisplayName: null
+        value: IdentityExperienceFramework_SCOPE
+      }
+    ]
+  }
   requiredResourceAccess: [
     {
       resourceAppId: wellKnown.MSGRAPH_APP_ID
       resourceAccess: [
         {
-          id: wellKnown.MSGRAPH_APP_WEBAPI_PERMISSIONS.openid // openid
+          id: wellKnown.MSGRAPH_APP_WEBAPI_PERMISSIONS.openid
           type: 'Scope'
         }
         {
-          id: wellKnown.MSGRAPH_APP_WEBAPI_PERMISSIONS.offline_access // offline_access
+          id: wellKnown.MSGRAPH_APP_WEBAPI_PERMISSIONS.offline_access
           type: 'Scope'
         }
       ]
@@ -53,16 +68,51 @@ resource IdentityExperienceFramework_APP 'Microsoft.Graph/applications@v1.0' = {
   ]
 }
 
-resource IdentityExperienceFramework_SP 'Microsoft.Graph/servicePrincipals@v1.0' = {
-  appId: IdentityExperienceFramework_APP.appId
+var ProxyIdentityExperienceFramework_NAME = 'ProxyIdentityExperienceFramework'
+resource ProxyIdentityExperienceFramework_APP 'Microsoft.Graph/applications@v1.0' = {
+  uniqueName: ProxyIdentityExperienceFramework_NAME
+  displayName: ProxyIdentityExperienceFramework_NAME
+  signInAudience: 'AzureADMyOrg'
+  publicClient: {
+    redirectUris: ['myapp://auth']
+  }
+  isFallbackPublicClient: true
+  requiredResourceAccess: [
+    {
+      resourceAppId: IdentityExperienceFramework_APP.appId
+      resourceAccess: [
+        {
+          id: IdentityExperienceFramework_APP.api.oauth2PermissionScopes[0].id
+          type: 'Scope'
+        }
+      ]
+    }
+    {
+      resourceAppId: wellKnown.MSGRAPH_APP_ID
+      resourceAccess: [
+        {
+          id: wellKnown.MSGRAPH_APP_WEBAPI_PERMISSIONS.openid
+          type: 'Scope'
+        }
+        {
+          id: wellKnown.MSGRAPH_APP_WEBAPI_PERMISSIONS.offline_access
+          type: 'Scope'
+        }
+      ]
+    }
+  ]
 }
 
-resource identityExperienceFrameworkApiScope 'Microsoft.Graph/oauth2PermissionGrants@v1.0' = {
-    consentType: 'AllPrincipals'
-    clientId: IdentityExperienceFramework_SP.id
-    scope: IdentityExperienceFramework_SCOPE
-    resourceId: MSGRAPH_SP.id
-}
+// resource IdentityExperienceFramework_SP 'Microsoft.Graph/servicePrincipals@v1.0' = {
+//   appId: IdentityExperienceFramework_APP.appId
+// }
+
+// resource identityExperienceFrameworkApiScope 'Microsoft.Graph/oauth2PermissionGrants@v1.0' = {
+//     consentType: 'AllPrincipals'
+//     clientId: IdentityExperienceFramework_SP.id
+//     scope: IdentityExperienceFramework_SCOPE
+//     resourceId: MSGRAPH_SP.id
+// }
 
 // resource IdentityExperienceFramework_PERMISSION_GRANT_MSGRAPH 'Microsoft.Graph/oauth2PermissionGrants@v1.0' = {
 //   clientId: IdentityExperienceFramework_SP.id
@@ -73,15 +123,7 @@ resource identityExperienceFrameworkApiScope 'Microsoft.Graph/oauth2PermissionGr
 
 
 
-// var ProxyIdentityExperienceFramework_NAME = 'ProxyIdentityExperienceFramework'
-// resource ProxyIdentityExperienceFramework_APP 'Microsoft.Graph/applications@v1.0' = {
-//   uniqueName: ProxyIdentityExperienceFramework_NAME
-//   displayName: ProxyIdentityExperienceFramework_NAME
-//   signInAudience: 'AzureADMyOrg'
-//   publicClient: {
-//     redirectUris: ['myapp://auth']
-//   }
-// }
+
 
 // resource ProxyIdentityExperienceFramework_SP 'Microsoft.Graph/servicePrincipals@v1.0' = {
 //   appId: ProxyIdentityExperienceFramework_APP.appId

@@ -18,7 +18,6 @@ var resourceGroupName = createResourceGroupName(projectName, location, env)
 // ====================================== MODULES ============================================== //
 module projectEnvRGModule '../../modules/rg/resource-group.bicep' = {
   name: 'projectEnvRGModule'
-  scope: subscription()
   params: {
     location: location
     resourceGroupName: resourceGroupName
@@ -41,6 +40,7 @@ module resourcesWrapperModule '../../resources/resources.bicep' = {
     congitiveServiceName: createCongitiveServiceName(projectName, env)
     WEB_APP_DOMAIN: createDefaultWebAppDomain(createShortTenantName(projectName, env))
     B2C_REDIRECT_URL: createB2CapplicationRedirectUri(createShortTenantName(projectName, env))
+    FULL_TENANT_NAME: createFullTenantName(createShortTenantName(projectName, env))
   }
 }
 // ====================================== OUTPUT =============================================== //
