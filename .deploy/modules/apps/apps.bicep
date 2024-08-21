@@ -20,8 +20,24 @@ var wellKnown = {
   }
 }
 
+var MS_GRAPH_IDENTITY_ROLES = [
+  {
+    id: wellKnown.MSGRAPH_APP_WEBAPI_PERMISSIONS.openid
+    type: 'Scope'
+  }
+  {
+    id: wellKnown.MSGRAPH_APP_WEBAPI_PERMISSIONS.offline_access
+    type: 'Scope'
+  }
+]
+
 var IdentityExperienceFramework_NAME = 'IdentityExperienceFramework'
+var ProxyIdentityExperienceFramework_NAME = 'ProxyIdentityExperienceFramework'
+var ServerApplication_NAME = 'ServerApi'
+
+
 var IdentityExperienceFramework_SCOPE = 'user_impersonation'
+var ServerApplicationShared_SCOPE = 'STANDARD.USER.API'
 // ====================================== RESOURCES ============================================ //
 resource MSGRAPH_SP 'Microsoft.Graph/servicePrincipals@v1.0' = {
   appId: wellKnown.MSGRAPH_APP_ID
@@ -54,21 +70,24 @@ resource IdentityExperienceFramework_APP 'Microsoft.Graph/applications@v1.0' = {
   requiredResourceAccess: [
     {
       resourceAppId: wellKnown.MSGRAPH_APP_ID
-      resourceAccess: [
-        {
-          id: wellKnown.MSGRAPH_APP_WEBAPI_PERMISSIONS.openid
-          type: 'Scope'
-        }
-        {
-          id: wellKnown.MSGRAPH_APP_WEBAPI_PERMISSIONS.offline_access
-          type: 'Scope'
-        }
-      ]
+      resourceAccess: MS_GRAPH_IDENTITY_ROLES
     }
   ]
 }
 
-var ProxyIdentityExperienceFramework_NAME = 'ProxyIdentityExperienceFramework'
+resource IdentityExperienceFramework_SP 'Microsoft.Graph/servicePrincipals@v1.0' = {
+  appId: IdentityExperienceFramework_APP.appId
+}
+
+resource  IdentityExperienceFramework_ROLES 'Microsoft.Graph/oauth2PermissionGrants@v1.0' = {
+    principalId: null
+    clientId: IdentityExperienceFramework_SP.id
+    resourceId: MSGRAPH_SP.id
+    consentType: 'AllPrincipals'
+    scope: 'openid offline_access'
+}
+
+
 resource ProxyIdentityExperienceFramework_APP 'Microsoft.Graph/applications@v1.0' = {
   uniqueName: ProxyIdentityExperienceFramework_NAME
   displayName: ProxyIdentityExperienceFramework_NAME
@@ -89,62 +108,36 @@ resource ProxyIdentityExperienceFramework_APP 'Microsoft.Graph/applications@v1.0
     }
     {
       resourceAppId: wellKnown.MSGRAPH_APP_ID
-      resourceAccess: [
-        {
-          id: wellKnown.MSGRAPH_APP_WEBAPI_PERMISSIONS.openid
-          type: 'Scope'
-        }
-        {
-          id: wellKnown.MSGRAPH_APP_WEBAPI_PERMISSIONS.offline_access
-          type: 'Scope'
-        }
-      ]
+      resourceAccess: MS_GRAPH_IDENTITY_ROLES
     }
   ]
 }
 
-// resource IdentityExperienceFramework_SP 'Microsoft.Graph/servicePrincipals@v1.0' = {
-//   appId: IdentityExperienceFramework_APP.appId
-// }
+resource ProxyIdentityExperienceFramework_SP 'Microsoft.Graph/servicePrincipals@v1.0' = {
+  appId: ProxyIdentityExperienceFramework_APP.appId
+}
 
-// resource identityExperienceFrameworkApiScope 'Microsoft.Graph/oauth2PermissionGrants@v1.0' = {
-//     consentType: 'AllPrincipals'
-//     clientId: IdentityExperienceFramework_SP.id
-//     scope: IdentityExperienceFramework_SCOPE
-//     resourceId: MSGRAPH_SP.id
-// }
+resource  ProxyIdentityExperienceFramework_ROLES 'Microsoft.Graph/oauth2PermissionGrants@v1.0' = {
+  principalId: null
+  clientId: ProxyIdentityExperienceFramework_SP.id
+  resourceId: MSGRAPH_SP.id
+  consentType: 'AllPrincipals'
+  scope: 'openid offline_access'
+}
 
-// resource IdentityExperienceFramework_PERMISSION_GRANT_MSGRAPH 'Microsoft.Graph/oauth2PermissionGrants@v1.0' = {
-//   clientId: IdentityExperienceFramework_SP.id
-//   consentType: 'AllPrincipals'
-//   resourceId: MSGRAPH_SP.id
-//   scope: wellKnown.MSGRAPH_DEFAULT_SCOPE
-// }
+resource  ProxyIdentityExperienceFramework_SHARED 'Microsoft.Graph/oauth2PermissionGrants@v1.0' = {
+  principalId: null
+  clientId: ProxyIdentityExperienceFramework_SP.id
+  resourceId: IdentityExperienceFramework_SP.id
+  consentType: 'AllPrincipals'
+  scope: IdentityExperienceFramework_SCOPE
+}
 
-
-
-
-
-// resource ProxyIdentityExperienceFramework_SP 'Microsoft.Graph/servicePrincipals@v1.0' = {
-//   appId: ProxyIdentityExperienceFramework_APP.appId
-// }
-
-// resource ProxyIdentityExperienceFramework_PERMISSION_GRANT_MSGRAPH 'Microsoft.Graph/oauth2PermissionGrants@v1.0' = {
-//   clientId: ProxyIdentityExperienceFramework_SP.id
-//   consentType: 'AllPrincipals'
-//   resourceId: MSGRAPH_SP.id
-//   scope: wellKnown.MSGRAPH_DEFAULT_SCOPE
-// }
-
-// resource ProxyIdentityExperienceFramework_PERMISSION_GRANT_IDENTITY 'Microsoft.Graph/oauth2PermissionGrants@v1.0' = {
-//   clientId: ProxyIdentityExperienceFramework_SP.id
-//   consentType: 'AllPrincipals'
-//   resourceId: IdentityExperienceFramework_SP.id
-//   scope: IdentityExperienceFramework_SCOPE
-// }
-
-
-// var WebApi_NAME = 'web-api'
+resource ServerApplication_APP 'Microsoft.Graph/applications@v1.0' = {
+  uniqueName: ServerApplication_NAME
+  displayName: ServerApplication_NAME
+  signInAudience: 'AzureADandPersonalMicrosoftAccount'
+}
 // var WebApi_EXPOSED_SCOPE_NAME = 'STANDARD.USER.API'
 // resource WebApi_APP 'Microsoft.Graph/applications@v1.0' = {
 //   uniqueName: WebApi_NAME
