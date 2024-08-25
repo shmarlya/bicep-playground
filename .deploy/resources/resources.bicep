@@ -50,6 +50,7 @@ module appsModule '../modules/apps/apps.bicep' = {
   params: {
     B2C_REDIRECT_URL: B2C_REDIRECT_URL
     FULL_TENANT_NAME: FULL_TENANT_NAME
+    WEB_APP_DOMAIN: WEB_APP_DOMAIN
   }
 }
 
