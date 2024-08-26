@@ -30,6 +30,10 @@ param storageName string
 param appServicePlanName string
 param tenantName string
 param congitiveServiceName string
+param keyVaultName string
+param identityName string
+param certificateName string
+param certificateSubject string
 
 var resourcesMap = {
   prod: {
@@ -45,12 +49,40 @@ var resourcesMap = {
   }
 }
 
+module webIdentityModule '../modules/managedIdentity/userAssigned.bicep' = {
+  name: 'webIdentityModule'
+  params: {
+    identityName: identityName
+  }
+}
+
+module kvModule '../modules/kv/kv.bicep' = {
+  name: 'kvModule'
+  params: {
+    keyVaultName: keyVaultName
+    webIdentityPrincipalId: webIdentityModule.outputs.managedIdentityPrincipalId
+  }
+}
+
+module certModule '../scripts/cert/create-cert.bicep' = {
+  name: 'certModule'
+  params: {
+    vaultName: keyVaultName
+    certificateName: certificateName
+    subjectName: certificateSubject
+    webIdentityId: webIdentityModule.outputs.managedIdentityId
+  }
+}
+
 module appsModule '../modules/apps/apps.bicep' = {
   name: 'appsModule'
   params: {
     B2C_REDIRECT_URL: B2C_REDIRECT_URL
     FULL_TENANT_NAME: FULL_TENANT_NAME
     WEB_APP_DOMAIN: WEB_APP_DOMAIN
+    certKey: certModule.outputs.certKey
+    certStartDate: certModule.outputs.certStartDate
+    certEndDate: certModule.outputs.certEndDate
   }
 }
 

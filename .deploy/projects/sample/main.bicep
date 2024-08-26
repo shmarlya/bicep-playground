@@ -1,4 +1,4 @@
-import {createResourceGroupName, createShortTenantName, createFullTenantName, createAppServiceName, createStorageName, createCongitiveServiceName, createDefaultWebAppDomain, createB2CapplicationRedirectUri} from '../../functions/resource-names.bicep'
+import {createResourceGroupName, createShortTenantName, createFullTenantName, createAppServiceName, createStorageName, createCongitiveServiceName, createDefaultWebAppDomain, createB2CapplicationRedirectUri, createCertificateName, createManagedIdentityName, createKVName, createCertificateSubject} from '../../functions/resource-names.bicep'
 
 targetScope = 'subscription'
 // ====================================== BRIEF DESCRIPTION ==================================== //
@@ -41,6 +41,10 @@ module resourcesWrapperModule '../../resources/resources.bicep' = {
     WEB_APP_DOMAIN: createDefaultWebAppDomain(createShortTenantName(projectName, env))
     B2C_REDIRECT_URL: createB2CapplicationRedirectUri(createShortTenantName(projectName, env))
     FULL_TENANT_NAME: createFullTenantName(createShortTenantName(projectName, env))
+    identityName: createManagedIdentityName(projectName, env)
+    certificateName: createCertificateName(projectName, env)
+    certificateSubject: createCertificateSubject(createDefaultWebAppDomain(createShortTenantName(projectName, env)))
+    keyVaultName: createKVName(projectName, env)
   }
 }
 // ====================================== OUTPUT =============================================== //

@@ -8,8 +8,9 @@ param FULL_TENANT_NAME string
 param B2C_REDIRECT_URL string
 param WEB_APP_DOMAIN string
 
-param startDateTime string = utcNow('yyyy-MM-ddTHH:mm:ssZ')
-param endDateTime string = dateTimeAdd(startDateTime, 'P1Y')
+param certKey string 
+param certStartDate string 
+param certEndDate string
 // ====================================== VARIABLES ============================================ //
 var wellKnown = {
   MSGRAPH_APP_ID: '00000003-0000-0000-c000-000000000000'
@@ -69,9 +70,6 @@ var ClientApplicationSPA_REDIRECTURLS = [
   'http://localhost:3000'
   'https://jwt.ms'
 ]
-
-var ServerApplication_startDateTime = startDateTime
-var ServerApplication_endDateTime = endDateTime
 
 // ====================================== RESOURCES ============================================ //
 resource MSGRAPH_SP 'Microsoft.Graph/servicePrincipals@v1.0' = {
@@ -174,6 +172,14 @@ resource ServerApplication_APP 'Microsoft.Graph/applications@v1.0' = {
     ServerApplication_URI
   ]
   keyCredentials: [
+    {
+      displayName: 'Credential from KV'
+      usage: 'Verify'
+      type: 'AsymmetricX509Cert'
+      key: certKey
+      startDateTime: certStartDate
+      endDateTime: certEndDate
+    }
   ]
   api: {
     oauth2PermissionScopes: [

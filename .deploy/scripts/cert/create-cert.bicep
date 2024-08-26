@@ -4,9 +4,10 @@ param vaultName string
 param certificateName string
 param subjectName string
 param webIdentityId string
-param utcValue string = utcNow()
+param utcValue string = utcNow('yyyy-MM-ddTHH:mm:ssZ')
 
-resource createAddCertificate 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
+// Deployment script run by the webIdentity MSI to create cert and get the public key and cert metadata
+resource createCertificate 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
   name: 'createAddCertificate'
   location: location
   identity: {
@@ -80,3 +81,8 @@ resource createAddCertificate 'Microsoft.Resources/deploymentScripts@2023-08-01'
     retentionInterval: 'P1D'
   }
 }
+
+
+output certKey string = createCertificate.properties.outputs.certKey
+output certStartDate string = createCertificate.properties.outputs.certStart
+output certEndDate string = createCertificate.properties.outputs.certEnd

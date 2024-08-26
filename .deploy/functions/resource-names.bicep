@@ -38,3 +38,16 @@ func createB2CapplicationRedirectUri(tenantName string) string => 'https://${ten
 
 @export()
 func createCongitiveServiceName(projectName string, env string) string => 'copmuter-vision-${removeDashesFromString(projectName)}-${removeDashesFromString(env)}'
+
+
+@export()
+func createCertificateName(projectName string, env string) string => 'cert-${removeDashesFromString(projectName)}-${removeDashesFromString(env)}'
+
+@export()
+func createManagedIdentityName(projectName string, env string) string => 'managedIdentity-${removeDashesFromString(projectName)}-${removeDashesFromString(env)}'
+
+@export()
+func createCertificateSubject(webAppDomain string) string => 'CN=${webAppDomain}'
+
+@export()
+func createKVName(projectName string, env string) string => 'kv-${removeDashesFromString(projectName)}-${removeDashesFromString(env)}'
