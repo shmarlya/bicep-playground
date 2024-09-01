@@ -12,39 +12,36 @@ targetScope = 'subscription'
 // ====================================== VARIABLES ============================================ //
 var config = loadJsonContent('../../config.json')
 var location = deployment().location
-var projectName = config.PROJECT_NAME
-var env = config.ENVIRONMENTS[0]
-var resourceGroupName = createResourceGroupName(projectName, location, env)
+var project = config.PROEJCTS[0]
+var projectName = project.PROJECT_NAME
+var env = project.ENVIRONMENTS[0]
+var envName = env.envName
+var subscriptionId = env.subsciprtionId
+var resourceGroupName = createResourceGroupName(projectName, location, envName)
+var keyVaultName = createKVName(projectName, envName)
 // ====================================== MODULES ============================================== //
-module projectEnvRGModule '../../modules/rg/resource-group.bicep' = {
-  name: 'projectEnvRGModule'
-  params: {
-    location: location
-    resourceGroupName: resourceGroupName
-  }
+
+resource kv 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
+  name: keyVaultName
+  scope: resourceGroup(subscriptionId, resourceGroupName )
 }
 
 module resourcesWrapperModule '../../resources/resources.bicep' = {
   name: 'resourcesWrapperModule-${env}'
   scope: resourceGroup(resourceGroupName)
-  dependsOn: [projectEnvRGModule]
   params: {
-    env:env
-    PORT: config.PROJECT[env].params.PORT
-    SOCKET_PORT: config.PROJECT[env].params.SOCKET_PORT
-    STRIPE_SECRET: config.PROJECT[env].params.STRIPE_SECRET
-    STRIPE_WEBHOOK_SECRET: config.PROJECT[env].params.STRIPE_WEBHOOK_SECRET
-    appServicePlanName: createAppServiceName(projectName, location, env)
-    tenantName: createShortTenantName(projectName, env)
-    storageName: createStorageName(projectName, env)
-    congitiveServiceName: createCongitiveServiceName(projectName, env)
-    WEB_APP_DOMAIN: createDefaultWebAppDomain(createShortTenantName(projectName, env))
-    B2C_REDIRECT_URL: createB2CapplicationRedirectUri(createShortTenantName(projectName, env))
-    FULL_TENANT_NAME: createFullTenantName(createShortTenantName(projectName, env))
-    identityName: createManagedIdentityName(projectName, env)
-    certificateName: createCertificateName(projectName, env)
-    certificateSubject: createCertificateSubject(createDefaultWebAppDomain(createShortTenantName(projectName, env)))
-    keyVaultName: createKVName(projectName, env)
+    env: envName
+    appServicePlanName: createAppServiceName(projectName, location, envName)
+    tenantName: createShortTenantName(projectName, envName)
+    storageName: createStorageName(projectName, envName)
+    congitiveServiceName: createCongitiveServiceName(projectName, envName)
+    WEB_APP_DOMAIN: createDefaultWebAppDomain(createShortTenantName(projectName, envName))
+    B2C_REDIRECT_URL: createB2CapplicationRedirectUri(createShortTenantName(projectName, envName))
+    FULL_TENANT_NAME: createFullTenantName(createShortTenantName(projectName, envName))
+    webIdentityPrincipalId: kv.getSecret('webIdentityPrincipalId')
+    certificateName: createCertificateName(projectName, envName)
+    certificateSubject: createCertificateSubject(createDefaultWebAppDomain(createShortTenantName(projectName, envName)))
+    keyVaultName: createKVName(projectName, envName)
   }
 }
 // ====================================== OUTPUT =============================================== //

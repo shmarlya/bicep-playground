@@ -8,15 +8,17 @@ targetScope = 'tenant'
 // ====================================== PARAMETERS =========================================== //
 // ====================================== VARIABLES ============================================ //
 var config = loadJsonContent('../../config.json')
+var project = config.PROEJCTS[0]
+var projectName = project.PROJECT_NAME
 var billingProfileName = config.USER_BILINGINFO.billingProfileName
 var invoiceSectionName = config.USER_BILINGINFO.invoiceSectionName
 var billingAccountName = config.USER_BILINGINFO.billingAccountName
 // ====================================== MODULES ============================================== //
-module projectSubscription '../../modules/sub/subscription.tenant.bicep' = [for (env, i) in config.ENVIRONMENTS: {
-  name: 'projectSubscription-${config.PROJECT_NAME}-${env}'
+module projectSubscription '../../modules/sub/subscription.tenant.bicep' = [for (env, i) in project.ENVIRONMENTS: {
+  name: 'projectSubscription-${projectName}-${env}'
   params: {
-    subscriptionName: createSubscriptionName(config.PROJECT_NAME, env)
-    subscriptionTenantId: config.PROJECT[env].tenantId
+    subscriptionName: createSubscriptionName(projectName, env.envName)
+    subscriptionTenantId: env.tenantId
     billingProfileName: billingProfileName
     invoiceSectionName: invoiceSectionName
     billingAccountName: billingAccountName

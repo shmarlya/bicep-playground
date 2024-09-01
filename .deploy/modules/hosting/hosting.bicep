@@ -1,4 +1,9 @@
 
+
+param keyVaultName string
+param subscriptionId string
+param resourceGroupName string
+
 @allowed([
   'F1'
 ])
@@ -22,17 +27,34 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
 ])
 param linuxFxVersion string = 'Node|20'
 param webAppName string
+
+
+@secure()
 param ENV string
+@secure()
 param AZURE_COMPUTER_VISION_KEY string
+@secure()
 param AZURE_COMPUTER_VISION_ENDPOINT string
+@secure()
 param AZURE_STORAGE_CONNECTION_STRING string
+@secure()
 param AZURE_STORAGE_BLOB_DOMAIN string
+@secure()
 param WEB_APP_DOMAIN string
+@secure()
 param PORT string
+@secure()
 param SOCKET_PORT string
+@secure()
 param STRIPE_SECRET string
+@secure()
 param STRIPE_WEBHOOK_SECRET string
+@secure()
 param B2C_REDIRECT_URL string
+
+param repositoryUrl string
+param branch string
+
 
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: webAppName
@@ -44,7 +66,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
       appSettings: [
         {
           name: 'ENV'
-          value:  ENV
+          value: ENV
         }
         {
           name: 'WEB_APP_DOMAIN'
@@ -91,5 +113,15 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
   }
   identity: {
     type: 'SystemAssigned'
+  }
+}
+
+resource srcControls 'Microsoft.Web/sites/sourcecontrols@2021-01-01' = {
+  name: 'web'
+  parent: appService
+  properties: {
+    repoUrl: repositoryUrl
+    branch: branch
+    isManualIntegration: true
   }
 }

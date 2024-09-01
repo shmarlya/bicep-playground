@@ -10,16 +10,17 @@ targetScope = 'tenant'
 param location string = deployment().location
 // ====================================== VARIABLES ============================================ //
 var config = loadJsonContent('../../config.json')
-var projectName = config.PROJECT_NAME
+var project = config.PROEJCTS[0]
+var projectName = project.PROJECT_NAME
 var rootOrganizationSubscriptionId = config.ORG_SUBSCRIPTION_ID
 var countryCode = config.ORG_COUNTRY_CODE
 var tenantRegion = config.ORG_TENANT_REGION
 // ====================================== MODULES ============================================== //
-module projectTenant '../../modules/tenant/tenant.bicep' = [for (env, i) in config.ENVIRONMENTS: {
+module projectTenant '../../modules/tenant/tenant.bicep' = [for (env, i) in project.ENVIRONMENTS: {
   name: 'projectTenant-${projectName}-${env}'
-  scope: resourceGroup(rootOrganizationSubscriptionId, createResourceGroupName(projectName, location, env))
+  scope: resourceGroup(rootOrganizationSubscriptionId, createResourceGroupName(projectName, location, env.envName))
   params: {
-    fullTenantName: createFullTenantName(createShortTenantName(projectName, env))
+    fullTenantName: createFullTenantName(createShortTenantName(projectName, env.envName))
     countryCode: countryCode
     tenantRegion: tenantRegion
   }

@@ -31,9 +31,10 @@ param appServicePlanName string
 param tenantName string
 param congitiveServiceName string
 param keyVaultName string
-param identityName string
 param certificateName string
 param certificateSubject string
+@secure()
+param webIdentityPrincipalId string
 
 var resourcesMap = {
   prod: {
@@ -49,28 +50,13 @@ var resourcesMap = {
   }
 }
 
-module webIdentityModule '../modules/managedIdentity/userAssigned.bicep' = {
-  name: 'webIdentityModule'
-  params: {
-    identityName: identityName
-  }
-}
-
-module kvModule '../modules/kv/kv.bicep' = {
-  name: 'kvModule'
-  params: {
-    keyVaultName: keyVaultName
-    webIdentityPrincipalId: webIdentityModule.outputs.managedIdentityPrincipalId
-  }
-}
-
 module certModule '../scripts/cert/create-cert.bicep' = {
   name: 'certModule'
   params: {
     vaultName: keyVaultName
     certificateName: certificateName
     subjectName: certificateSubject
-    webIdentityId: webIdentityModule.outputs.managedIdentityId
+    webIdentityId: webIdentityPrincipalId
   }
 }
 

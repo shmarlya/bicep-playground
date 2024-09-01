@@ -16,19 +16,18 @@
     "budgetStartDate": "2024-06-01",
     "budgetEndDate": "2025-06-30"
   },
-
-  "ENVIRONMENTS": ["dev"],
-  "PROJECT_NAME": "bibasplgrnd",
-  "PROJECT": {
-    "dev": {
-      "tenantId": "",
-      "subsciprtionId": "",
-      "params": {
-        "PORT": "3000",
-        "SOCKET_PORT": "3333",
-        "STRIPE_SECRET": "STRIPE_SECRET",
-        "STRIPE_WEBHOOK_SECRET": "STRIPE_WEBHOOK_SECRET"
-      }
+  "PROEJCTS": [
+    {
+      "PROJECT_NAME": "bibasplgrnd",
+      "ENVIRONMENTS": [
+        {
+          "envName": "dev",
+          "tenantId": "",
+          "subsciprtionId": "",
+          "envBranch": "main"
+        }
+      ],
+      "PROJECT_REPOSITORY": "https://github.com/shmarlya/bicep-playground.git"
     }
-  }
+  ]
 }

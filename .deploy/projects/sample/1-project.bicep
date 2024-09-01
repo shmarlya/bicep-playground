@@ -11,12 +11,13 @@ targetScope = 'subscription'
 param location string = deployment().location
 // ====================================== VARIABLES ============================================ //
 var config = loadJsonContent('../../config.json')
-var projectName = config.PROJECT_NAME
+var project = config.PROEJCTS[0]
+var projectName = project.PROJECT_NAME
 // ====================================== MODULES ============================================== //
-module resourceGroup '../../modules/rg/resource-group.bicep' = [for (env, i) in config.ENVIRONMENTS: {
+module resourceGroup '../../modules/rg/resource-group.bicep' = [for (env, i) in project.ENVIRONMENTS: {
   name: 'resourceGroup-${projectName}-${env}'
   params: {
-    resourceGroupName: createResourceGroupName(projectName, location, env)
+    resourceGroupName: createResourceGroupName(projectName, location, env.envName)
     location: location
   }
 }]
