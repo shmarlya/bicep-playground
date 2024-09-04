@@ -1,11 +1,4 @@
 {
-  "USER_INITIAL_SUBSCRIPTION_ID": "",
-  "USER_BILINGINFO": {
-    "billingAccountName": "",
-    "billingProfileName": "",
-    "invoiceSectionName": ""
-  },
-
   "ORG_NAME": "ivyar",
   "ORG_SUBSCRIPTION_ID": "",
   "ORG_POSTFIX": "root",
@@ -16,18 +9,19 @@
     "budgetStartDate": "2024-06-01",
     "budgetEndDate": "2025-06-30"
   },
-  "PROEJCTS": [
+  "PROJECTS": [
     {
       "PROJECT_NAME": "bibasplgrnd",
+      "PROJECT_REPOSITORY_ORG_NAME": "shmarlya",
+      "PROJECT_REPOSITORY_NAME": "bicep-playground",
       "ENVIRONMENTS": [
         {
-          "envName": "dev",
-          "tenantId": "",
-          "subsciprtionId": "",
-          "envBranch": "main"
+          "PROJECT_ENV_NAME": "dev",
+          "PROJECT_ENV_TENANT_ID": "",
+          "PROJECT_ENV_SUBSCRIPTION_ID": "",
+          "PROJECT_ENV_BRANCH_NAME": "main"
         }
-      ],
-      "PROJECT_REPOSITORY": "https://github.com/shmarlya/bicep-playground.git"
+      ]
     }
   ]
 }

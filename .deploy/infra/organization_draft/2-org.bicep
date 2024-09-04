@@ -8,8 +8,8 @@ targetScope = 'tenant'
 // ====================================== PARAMETERS =========================================== //
 param location string = deployment().location
 // ====================================== VARIABLES ============================================ //
-var config = loadJsonContent('../config.json')
-var userSubscriptionId = config.USER_INITIAL_SUBSCRIPTION_ID
+var config = loadJsonContent('../../config.json')
+var ORG_SUBSCRIPTION_ID = config.ORG_SUBSCRIPTION_ID
 var orgName = config.ORG_NAME
 var env = config.ORG_POSTFIX
 var countryCode = config.ORG_COUNTRY_CODE
@@ -20,7 +20,7 @@ var rootRGName = createResourceGroupName(orgName, location, env)
 // ====================================== MODULES ============================================== //
 module rootTenant '../modules/tenant/tenant.bicep' = {
   name: 'rootTenantModule'
-  scope: resourceGroup(userSubscriptionId, rootRGName)
+  scope: resourceGroup(ORG_SUBSCRIPTION_ID, rootRGName)
   params: {
     fullTenantName: fullRootTenantName
     countryCode: countryCode

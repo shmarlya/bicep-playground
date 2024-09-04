@@ -51,3 +51,9 @@ func createCertificateSubject(webAppDomain string) string => 'CN=${webAppDomain}
 
 @export()
 func createKVName(projectName string, env string) string => 'kv-${removeDashesFromString(projectName)}-${removeDashesFromString(env)}'
+
+@export()
+func createGitSubjectIdentifier(orgName string, repositoryName string, branchName string) string => 'repo:${orgName}/${repositoryName}:ref:refs/heads/${branchName}'
+
+@export()
+func createFullGitHubRepoURL(orgName string, repositoryName string) string => 'https://github.com/${orgName}/${repositoryName}'

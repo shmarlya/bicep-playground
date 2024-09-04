@@ -7,14 +7,15 @@ targetScope = 'tenant'
 // ====================================== PARAMETERS =========================================== //
 param location string = deployment().location
 // ====================================== VARIABLES ============================================ //
-var config = loadJsonContent('../config.json')
+var config = loadJsonContent('../../config.json')
+var secrets = loadJsonContent('../../secrets.json')
 var orgName = config.ORG_NAME
 var env = config.ORG_POSTFIX
-var userSubscriptionId = config.USER_INITIAL_SUBSCRIPTION_ID
+var userSubscriptionId = config.ORG_SUBSCRIPTION_ID
 var rootOrgSubscriptionName = createSubscriptionName(orgName, env)
-var billingProfileName = config.USER_BILINGINFO.billingProfileName
-var invoiceSectionName = config.USER_BILINGINFO.invoiceSectionName
-var billingAccountName = config.USER_BILINGINFO.billingAccountName
+var billingProfileName = secrets.AZURE_USER_BILINGINFO.billingProfileName
+var invoiceSectionName = secrets.AZURE_USER_BILINGINFO.invoiceSectionName
+var billingAccountName = secrets.AZURE_USER_BILINGINFO.billingAccountName
 var rootRGName = createResourceGroupName(orgName, location, env)
 var fullRootTenantName = createFullTenantName(createShortTenantName(orgName, env))
 // ====================================== RESOURCES ============================================ //

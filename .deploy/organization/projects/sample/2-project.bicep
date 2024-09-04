@@ -1,4 +1,4 @@
-import {createResourceGroupName, createShortTenantName, createFullTenantName} from '../../functions/resource-names.bicep'
+import {createResourceGroupName, createShortTenantName, createFullTenantName} from '../../../infra/functions/resource-names.bicep'
 targetScope = 'tenant'
 // ====================================== BRIEF DESCRIPTION ==================================== //
 // creating project env tenant in enviroment project resource group
@@ -9,18 +9,18 @@ targetScope = 'tenant'
 // ====================================== PARAMETERS =========================================== //
 param location string = deployment().location
 // ====================================== VARIABLES ============================================ //
-var config = loadJsonContent('../../config.json')
-var project = config.PROEJCTS[0]
+var config = loadJsonContent('../../../config.json')
+var project = config.PROJECTS[0]
 var projectName = project.PROJECT_NAME
 var rootOrganizationSubscriptionId = config.ORG_SUBSCRIPTION_ID
 var countryCode = config.ORG_COUNTRY_CODE
 var tenantRegion = config.ORG_TENANT_REGION
 // ====================================== MODULES ============================================== //
-module projectTenant '../../modules/tenant/tenant.bicep' = [for (env, i) in project.ENVIRONMENTS: {
+module projectTenant '../../../infra/modules/tenant/tenant.bicep' = [for (env, i) in project.ENVIRONMENTS: {
   name: 'projectTenant-${projectName}-${env}'
-  scope: resourceGroup(rootOrganizationSubscriptionId, createResourceGroupName(projectName, location, env.envName))
+  scope: resourceGroup(rootOrganizationSubscriptionId, createResourceGroupName(projectName, location, env.PROJECT_ENV_NAME))
   params: {
-    fullTenantName: createFullTenantName(createShortTenantName(projectName, env.envName))
+    fullTenantName: createFullTenantName(createShortTenantName(projectName, env.PROJECT_ENV_NAME))
     countryCode: countryCode
     tenantRegion: tenantRegion
   }

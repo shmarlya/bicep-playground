@@ -1,9 +1,4 @@
 
-
-param keyVaultName string
-param subscriptionId string
-param resourceGroupName string
-
 @allowed([
   'F1'
 ])
@@ -51,9 +46,15 @@ param STRIPE_SECRET string
 param STRIPE_WEBHOOK_SECRET string
 @secure()
 param B2C_REDIRECT_URL string
+@secure()
+param B2C_CLIENT_APPLICATION_ID string
+@secure()
+param B2C_SERVER_APPLICATION_ID string
+@secure()
+param B2C_SERVER_APPLICATION_SECRET string
 
-param repositoryUrl string
-param branch string
+param FULL_GITHUB_PROJECT_REPOSITORY string
+param PROJECT_ENV_BRANCH_NAME string
 
 
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
@@ -108,6 +109,18 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
           name:'B2C_REDIRECT_URL'
           value: B2C_REDIRECT_URL
         }
+        {
+          name:'B2C_CLIENT_APPLICATION_ID'
+          value: B2C_CLIENT_APPLICATION_ID
+        }
+        {
+          name:'B2C_SERVER_APPLICATION_ID'
+          value: B2C_SERVER_APPLICATION_ID
+        }
+        {
+          name:'B2C_SERVER_APPLICATION_SECRET'
+          value: B2C_SERVER_APPLICATION_SECRET
+        }
       ]
     }
   }
@@ -120,8 +133,8 @@ resource srcControls 'Microsoft.Web/sites/sourcecontrols@2021-01-01' = {
   name: 'web'
   parent: appService
   properties: {
-    repoUrl: repositoryUrl
-    branch: branch
+    repoUrl: FULL_GITHUB_PROJECT_REPOSITORY
+    branch: PROJECT_ENV_BRANCH_NAME
     isManualIntegration: true
   }
 }

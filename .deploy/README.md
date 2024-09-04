@@ -3,7 +3,7 @@ sample setup:
 
 // TODO:
 
--
+- !important DESCRIBE STEPS
 - setup tenant application such as ProxyIdentityExperienceFramework and IdentityExperienceFramework, Web api and SPA client, upload Identity Experience Framework Custom Policies, Setup Policies Encryption and Singing Containers
 - create programatically Github service principal - on org level for start
 - setup CI/CD working github actions pipeline with provided input params (env)
@@ -11,6 +11,7 @@ sample setup:
 - create computer vision resource - find the way accept EULA programatically
 - mark @secure parameters
 - move resource map to config.json
+- kv approach doesnt work with RBAC wait\find working example
 
 1. Install Azure CLI
 
@@ -34,20 +35,16 @@ login into cli after you set all neccessary permissions for your user
 // elevate as Global Administrator
 https://learn.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin?tabs=azure-portal
 
+// update owner role through az cli for current user
+az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az ad signed-in-user show --query id --output tsv) --assignee-principal-type User
+
 // add required permissions read:
 https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-azure
 
 // add congitive contributor role to user
 
-or
-
-// assign Owner role at Tenant root scope ("/") as a User Access Administrator to current user (gets object Id of the current user (az login))
-az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az ad signed-in-user show --query id --output tsv) --assignee-principal-type User
-
-or
-
+// under portal
 Open Microsoft Entra ID ->  Under Manage, select Properties. -> Under Access management for Azure resources, set the toggle to Yes.
-
 
 // payment permissions elevate for user as billing profile owner
 https://learn.microsoft.com/en-us/azure/cost-management-billing/manage/view-all-accounts
@@ -67,41 +64,15 @@ az logout
 
 ```
 
-7. Create Service principal and update github secrets with output
+7. idk what it is
 
 ```
-spn_displayname='GitHubActions'
-az ad sp create-for-rbac --name $spn_displayname
-
-in the following format:
-{
-    "clientSecret":  "******",
-    "subscriptionId":  "******",
-    "tenantId":  "******",
-    "clientId":  "******"
-}
 
 az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az ad sp list --display-name "$spn_displayname" --query '[].id' -o tsv) --assignee-principal-type ServicePrincipal
 
 DONT FORGET to add in portal for created SP ->
 Certificates & secrets -> Add credential -> setup github actions and repository
 
-```
-
-```
-#sign into AZ CLI, this will redirect you to a webbrowser for authentication, if required
-az login
-
-#tenant level principal
-az ad sp create-for-rbac --name GithubActions --role contributor --scopes /providers/Microsoft.AzureActiveDirectoryB2C/b2cDirectories/{tenant_name}
-
-#assign Owner role at Tenant root scope ("/") as a User Access Administrator to current user (gets object Id of the current user (az login))
-az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az ad signed-in-user show --query id --output tsv) --assignee-principal-type User
-
-#(optional) assign Owner role at Tenant root scope ("/") as a User Access Administrator to service principal (set spn_displayname to your service principal displayname)
-
-spn_displayname='GitHubSP'
-az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az ad sp list --display-name "$spn_displayname" --query '[].id' -o tsv) --assignee-principal-type ServicePrincipal
 ```
 
 8. Helpfull commands

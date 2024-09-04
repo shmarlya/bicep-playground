@@ -9,7 +9,7 @@ targetScope = 'subscription'
 // az account show 
 // ====================================== PARAMETERS =========================================== //
 // ====================================== VARIABLES ============================================ //
-var config = loadJsonContent('../config.json')
+var config = loadJsonContent('../../config.json')
 var orgName = config.ORG_NAME
 var contactEmails = config.ORG_DATA.contactEmails
 var budgetStartDate = config.ORG_DATA.budgetStartDate

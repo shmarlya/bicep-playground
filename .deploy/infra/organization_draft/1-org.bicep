@@ -13,15 +13,15 @@ targetScope = 'tenant'
 param location string = deployment().location
 
 // ====================================== VARIABLES ============================================ //
-var config = loadJsonContent('../config.json')
-var userSubscriptionId = config.USER_INITIAL_SUBSCRIPTION_ID
+var config = loadJsonContent('../../config.json')
+var ORG_SUBSCRIPTION_ID = config.ORG_SUBSCRIPTION_ID
 var env = config.ORG_POSTFIX
 var orgName = config.ORG_NAME
 var rootRGName = createResourceGroupName(orgName, location, env)
 // ====================================== MODULES ============================================== //
 module rootRG '../modules/rg/resource-group.bicep' =  {
   name: 'rootRGmodule'
-  scope: subscription(userSubscriptionId)
+  scope: subscription(ORG_SUBSCRIPTION_ID)
   params: {
     location: location
     resourceGroupName: rootRGName

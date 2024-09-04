@@ -1,6 +1,6 @@
 import {createB2CapplicationRedirectUri} from '../../functions/resource-names.bicep'
 
-provider microsoftGraph
+extension microsoftGraph
 // ====================================== BRIEF DESCRIPTION ==================================== //
 // ====================================== GETTING STARTED ====================================== //
 // ====================================== PARAMETERS =========================================== //
@@ -8,9 +8,9 @@ param FULL_TENANT_NAME string
 param B2C_REDIRECT_URL string
 param WEB_APP_DOMAIN string
 
-param certKey string 
-param certStartDate string 
-param certEndDate string
+// param certKey string 
+// param certStartDate string 
+// param certEndDate string
 // ====================================== VARIABLES ============================================ //
 var wellKnown = {
   MSGRAPH_APP_ID: '00000003-0000-0000-c000-000000000000'
@@ -172,14 +172,14 @@ resource ServerApplication_APP 'Microsoft.Graph/applications@v1.0' = {
     ServerApplication_URI
   ]
   keyCredentials: [
-    {
-      displayName: 'Credential from KV'
-      usage: 'Verify'
-      type: 'AsymmetricX509Cert'
-      key: certKey
-      startDateTime: certStartDate
-      endDateTime: certEndDate
-    }
+    // {
+    //   displayName: 'Credential from KV'
+    //   usage: 'Verify'
+    //   type: 'AsymmetricX509Cert'
+    //   key: certKey
+    //   startDateTime: certStartDate
+    //   endDateTime: certEndDate
+    // }
   ]
   api: {
     oauth2PermissionScopes: [
@@ -264,3 +264,7 @@ resource  ClientApplicationSPA_SHARED 'Microsoft.Graph/oauth2PermissionGrants@v1
   consentType: 'AllPrincipals'
   scope: ServerApplication_SCOPE
 }
+
+
+output B2C_CLIENT_APPLICATION_ID string = ClientApplicationSPA_APP.appId
+output B2C_SERVER_APPLICATION_ID string = ServerApplication_APP.appId
