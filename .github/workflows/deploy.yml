@@ -28,15 +28,19 @@ jobs:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@main
 
+      # Use Azure credentials for 'prod'
+      - name: 'Login to Azure (Prod)'
         if: github.event.inputs.env == 'prod'
-      - uses: azure/login@v2
+        uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID_PROD }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID_PROD }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_PROD }}
 
+      # Use Azure credentials for 'dev'
+      - name: 'Login to Azure (Dev)'
         if: github.event.inputs.env == 'dev'
-      - uses: azure/login@v2
+        uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID_DEV }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID_DEV }}
@@ -53,15 +57,19 @@ jobs:
           npm run build --if-present
           npm run test --if-present
         working-directory: .
-        # deploy web app using Azure credentials
+
+      # Deploy web app to 'dev'
+      - name: 'Deploy to Azure WebApp (Dev)'
         if: github.event.inputs.env == 'dev'
-      - uses: azure/webapps-deploy@v3
+        uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME_DEV }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
+      # Deploy web app to 'prod'
+      - name: 'Deploy to Azure WebApp (Prod)'
         if: github.event.inputs.env == 'prod'
-      - uses: azure/webapps-deploy@v3
+        uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME_PROD }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
