@@ -1,0 +1,72 @@
+name: Deploy application
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        type: choice
+        description: choose env
+        options:
+          - dev
+          - prod
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AZURE_WEBAPP_NAME_DEV: ${{ vars.AZURE_WEBAPP_NAME_DEV }} # set this to your application's name
+  AZURE_WEBAPP_NAME_PROD: ${{ vars.AZURE_WEBAPP_NAME_PROD }} # set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: ${{ vars.BUILD_DIR }} # set this to the path to your web app project, defaults to the repository root
+  NODE_VERSION: '20.16.0' # set this to the node version to use
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # checkout the repo
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+
+        if: github.event.inputs.env == 'prod'
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID_PROD }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID_PROD }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_PROD }}
+
+        if: github.event.inputs.env == 'dev'
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID_DEV }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID_DEV }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_DEV }}
+
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 'npm install, build, and test'
+        run: |
+          npm install
+          npm run build --if-present
+          npm run test --if-present
+        working-directory: .
+        # deploy web app using Azure credentials
+        if: github.event.inputs.env == 'dev'
+      - uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME_DEV }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+        if: github.event.inputs.env == 'prod'
+      - uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME_PROD }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+      # Azure logout
+      - name: logout
+        run: |
+          az logout
