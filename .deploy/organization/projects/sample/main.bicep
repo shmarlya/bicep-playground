@@ -51,6 +51,7 @@ module resourcesWrapperModule '../../../infra/resources/resources.bicep' = {
     tenantName: createShortTenantName(projectName, envName)
     storageName: createStorageName(projectName, envName)
     congitiveServiceName: createCongitiveServiceName(projectName, envName)
+    appCommandLine: project.PROEJCT_START_COMMAND
     WEB_APP_DOMAIN: createDefaultWebAppDomain(createShortTenantName(projectName, envName))
     B2C_REDIRECT_URL: createB2CapplicationRedirectUri(createShortTenantName(projectName, envName))
     FULL_TENANT_NAME: createFullTenantName(createShortTenantName(projectName, envName))

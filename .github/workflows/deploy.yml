@@ -18,7 +18,7 @@ env:
   AZURE_WEBAPP_NAME_DEV: ${{ vars.AZURE_WEBAPP_NAME_DEV }} # set this to your application's name
   AZURE_WEBAPP_NAME_PROD: ${{ vars.AZURE_WEBAPP_NAME_PROD }} # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: ${{ vars.BUILD_DIR }} # set this to the path to your web app project, defaults to the repository root
-  NODE_VERSION: '20.16.0' # set this to the node version to use
+  NODE_VERSION: ${{ vars.NODE_VERSION }} # set this to the node version to use
 
 jobs:
   build-and-deploy:

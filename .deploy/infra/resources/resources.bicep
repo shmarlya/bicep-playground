@@ -34,6 +34,7 @@ param storageName string
 param appServicePlanName string
 param tenantName string
 param congitiveServiceName string
+param appCommandLine string
 // param keyVaultName string
 // param certificateName string
 // param certificateSubject string
@@ -110,6 +111,7 @@ module hostingModule '../modules/hosting/hosting.bicep'= {
     hostingSKU: resourcesMap[env].hostingSKU
     appServicePlanName: appServicePlanName
     webAppName: tenantName
+    appCommandLine: appCommandLine
     ENV: env
     WEB_APP_DOMAIN: WEB_APP_DOMAIN
     PORT: PORT

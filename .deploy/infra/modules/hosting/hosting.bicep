@@ -18,9 +18,10 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
 
 
 @allowed([
-  'Node|20'
+  'NODE|20-lts'
 ])
-param linuxFxVersion string = 'Node|20'
+param linuxFxVersion string = 'NODE|20-lts'
+param appCommandLine string
 param webAppName string
 
 
@@ -63,7 +64,12 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
+      netFrameworkVersion: null
+      phpVersion: null
+      windowsFxVersion: null
+      nodeVersion: null
       linuxFxVersion: linuxFxVersion
+      appCommandLine: appCommandLine
       appSettings: [
         {
           name: 'ENV'
